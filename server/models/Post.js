@@ -20,7 +20,7 @@ const PostSchema = new mongoose.Schema(
     },
     slug: {
       type: String,
-      required: true,
+      // Not required because we auto-generate it before validation/save
       unique: true,
     },
     excerpt: {
@@ -66,17 +66,38 @@ const PostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Create slug from title before saving
-PostSchema.pre('save', function (next) {
-  if (!this.isModified('title')) {
-    return next();
-  }
-  
-  this.slug = this.title
+// Helper to generate a URL-friendly slug from a title
+function makeSlug(title) {
+  return String(title)
     .toLowerCase()
+    .trim()
     .replace(/[^\w ]+/g, '')
     .replace(/ +/g, '-');
-    
+}
+
+// Ensure slug exists before validation (covers `create`)
+PostSchema.pre('validate', function (next) {
+  if (this.title && (!this.slug || this.isModified('title'))) {
+    this.slug = makeSlug(this.title);
+  }
+  next();
+});
+
+// Also set slug before saving (defensive; covers direct `save` on docs)
+PostSchema.pre('save', function (next) {
+  if (this.title && (!this.slug || this.isModified('title'))) {
+    this.slug = makeSlug(this.title);
+  }
+  next();
+});
+
+// Keep slug in sync on updates that change the title (e.g., findByIdAndUpdate)
+PostSchema.pre('findOneAndUpdate', function (next) {
+  const update = this.getUpdate() || {};
+  if (update.title) {
+    update.slug = makeSlug(update.title);
+    this.setUpdate(update);
+  }
   next();
 });
 

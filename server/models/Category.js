@@ -17,7 +17,6 @@ const CategorySchema = new mongoose.Schema(
     },
     slug: {
       type: String,
-      required: true,
       unique: true,
     },
   },
@@ -26,10 +25,6 @@ const CategorySchema = new mongoose.Schema(
 
 // Create slug from name before saving
 CategorySchema.pre('save', function (next) {
-  if (!this.isModified('name')) {
-    return next();
-  }
-  
   this.slug = this.name
     .toLowerCase()
     .replace(/[^\w ]+/g, '')
