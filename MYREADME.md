@@ -347,9 +347,13 @@ The application uses JWT (JSON Web Tokens) for authentication:
 }
 ```
 
-## 👨‍💻 Author
+## � Screenshots
 
-**Glory** - PLP MERN Stack Development Course
+![Post Home](../mern-stack-integration-Princessglory/client/public/images/Post%20Home.png)
+![Post page](../mern-stack-integration-Princessglory/client/public/images/Post%20page.png)
+## �👨‍💻 Author
+
+**Princess Glory** - PLP MERN Stack Development Course
 
 ## 📄 License
 
